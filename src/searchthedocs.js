@@ -3,18 +3,24 @@ define(function (require) {
   var _ = require('underscore'),
     $ = require('jquery'),
     Backbone = require('backbone'),
-    SearchFormView = require('./search_form');
+    Navbar = require('./navbar');
 
   var SearchTheDocsView = Backbone.View.extend({
 
-    initialize: function() {
-       this.render();
+    initialize: function(options) {
+      var t = this;
+      t.brand = options.brand;
+      t.brand_href = options.brand_href;
+      t.render();
     },
 
     render: function() {
       var t = this;
-      t.search_form_view = new SearchFormView();
-      t.$el.append(t.search_form_view.render().el);
+      t.navbar = new Navbar({
+        brand: t.brand,
+        brand_href: t.brand_href
+      });
+      t.$el.append(t.navbar.render().el);
     }
 
   });
