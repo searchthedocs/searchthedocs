@@ -1,0 +1,9 @@
+#searchthedocs .navbar-header {
+  width: 100%;
+}
+#searchthedocs .navbar-form {
+  width: 25%;
+}
+#searchthedocs .navbar-form .form-group {
+  width: 100%;
+}
