@@ -13,6 +13,7 @@ define(function (require) {
       var search = options.search;
       var domain = options.domain;
       var success = options.success;
+      var error = options.error;
 
       // Create the initial data object by extending the default params
       var data = _.extend({}, default_params);
@@ -28,7 +29,9 @@ define(function (require) {
         url: api_url,
         data: data,
         success: success,
+        error: error
       });
+
     };
 
     return execute_query;

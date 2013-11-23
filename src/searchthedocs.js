@@ -5,6 +5,7 @@ define(function (require) {
     Backbone = require('backbone'),
     Navbar = require('./navbar'),
     Sidebar = require('./sidebar'),
+    SearchFormView = require('./search_form'),
     configure_query_executor = require('./query_executor');
 
   var SearchTheDocsView = Backbone.View.extend({
@@ -18,6 +19,19 @@ define(function (require) {
       t.brand = options.brand;
       t.brand_href = options.brand_href;
       t.search_options = options.search_options;
+
+      _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
+
+      // Create a model to represent the query params.
+      t.query_model = new Backbone.Model();
+
+      // Bind to change events on the model.
+      t.listenTo(t.query_model, 'change', t.send_query_to_executor);
+
+      // Create a search form view with the query model bound to it.
+      t.search_form_view = new SearchFormView({
+        query_model: t.query_model
+      });
 
       // Default endpoint
       t.ep_name = t.search_options.default_endpoint;
@@ -38,6 +52,27 @@ define(function (require) {
       });
     },
 
+    send_query_to_executor: function() {
+      var t = this;
+      // Send the JSONified model to the query executor.
+      var query_options = _.extend({}, t.query_model.toJSON());
+      query_options.success = t.query_success;
+      query_options.error = t.query_error;
+
+      t.execute_query(query_options);
+    },
+
+    query_success: function(results) {
+      console.log('success');
+      console.log(this);
+      this.results = results;
+    },
+
+    query_error: function() {
+      console.log('error');
+      console.log(this);
+    },
+
     render: function() {
       var t = this;
 
@@ -48,7 +83,8 @@ define(function (require) {
       // Render navbar
       t.navbar = new Navbar({
         brand: t.brand,
-        brand_href: t.brand_href
+        brand_href: t.brand_href,
+        search_form_view: t.search_form_view
       });
       t.$el.append(t.navbar.render().el);
 

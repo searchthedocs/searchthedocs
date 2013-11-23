@@ -4,7 +4,6 @@ define(function (require) {
     $ = require('jquery'),
     Backbone = require('backbone'),
     Handlebars = require('handlebars'),
-    SearchFormView = require('./search_form'),
     navbar_tmpl = require('text!./tmpl/navbar.html');
 
   var Navbar = Backbone.View.extend({
@@ -19,6 +18,7 @@ define(function (require) {
       var t = this;
       t.brand = options.brand;
       t.brand_href = options.brand_href;
+      t.search_form_view = options.search_form_view;
     },
 
     render: function() {
@@ -29,7 +29,6 @@ define(function (require) {
       }));
 
       // Render search form subview into container
-      t.search_form_view = new SearchFormView();
       t.$('#search-form-container').html(t.search_form_view.render().el);
       return t;
     }

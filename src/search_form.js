@@ -14,9 +14,27 @@ define(function (require) {
 
     template: Handlebars.compile(search_form_tmpl),
 
+    events: {
+      'change input': 'set_query',
+      'keyup input': 'set_query',
+      'input input': 'set_query'
+    },
+
+    initialize: function(options) {
+      this.query_model = options.query_model;
+      _.bindAll(this, 'set_query');
+    },
+
     render: function() {
       this.$el.html(this.template());
       return this;
+    },
+
+    set_query: function() {
+       var search_val = this.$('input').val();
+       if (search_val.length > 2) {
+         this.query_model.set('search', search_val);
+       }
     }
 
   });
