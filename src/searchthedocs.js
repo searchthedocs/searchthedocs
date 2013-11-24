@@ -20,6 +20,7 @@ define(function (require) {
       t.brand = options.brand;
       t.brand_href = options.brand_href;
       t.search_options = options.search_options;
+      t.class_map = options.class_map;
 
       _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
 
@@ -72,7 +73,8 @@ define(function (require) {
       // Create view to show the document content,
       // bound to the query model and the currently chosen doc model.
       // The content view class is configurable in the endpoint config.
-      t.content_view = new t.ep.ContentViewClass({
+      var ContentViewClass = t.class_map[t.ep.content_view_class_string];
+      t.content_view = new ContentViewClass({
         doc_model: t.doc_model,
         query_model: t.query_model,
         content_url_format: t.ep.content_url_format
