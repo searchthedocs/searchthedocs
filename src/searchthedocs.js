@@ -6,6 +6,7 @@ define(function (require) {
     Navbar = require('./navbar'),
     Sidebar = require('./sidebar'),
     SearchFormView = require('./search_form'),
+    ResultModel = require('./result_model'),
     configure_query_executor = require('./query_executor');
 
   var SearchTheDocsView = Backbone.View.extend({
@@ -22,6 +23,10 @@ define(function (require) {
 
       _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
 
+      // Default endpoint
+      t.ep_name = t.search_options.default_endpoint;
+
+      t.set_endpoint(t.ep_name);
       // Create a model to represent the query params.
       t.query_model = new Backbone.Model();
 
@@ -33,9 +38,7 @@ define(function (require) {
         query_model: t.query_model
       });
 
-      // Default endpoint
-      t.ep_name = t.search_options.default_endpoint;
-      t.set_endpoint(t.ep_name);
+      t.results_model = new ResultModel(t.ep.result_format);
 
     },
 
@@ -65,7 +68,7 @@ define(function (require) {
     query_success: function(results) {
       console.log('success');
       console.log(this);
-      this.results = results;
+      this.results_model.set('results', results);
     },
 
     query_error: function() {
