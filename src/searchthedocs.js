@@ -7,7 +7,6 @@ define(function (require) {
     Sidebar = require('./sidebar'),
     SearchFormView = require('./search_form'),
     ResultsModel = require('./results_model'),
-    ContentPaneView = require('./content_pane'),
     configure_query_executor = require('./query_executor');
 
   var SearchTheDocsView = Backbone.View.extend({
@@ -72,7 +71,8 @@ define(function (require) {
 
       // Create view to show the document content,
       // bound to the query model and the currently chosen doc model.
-      t.content_pane_view = new ContentPaneView({
+      // The content view class is configurable in the endpoint config.
+      t.content_view = new t.ep.ContentViewClass({
         doc_model: t.doc_model,
         query_model: t.query_model,
         content_url_format: t.ep.content_url_format
@@ -127,8 +127,7 @@ define(function (require) {
       t.$el.append(t.navbar.render().el);
 
       // Render content pane
-      t.$el.append(t.content_pane_view.render().el);
-
+      t.$el.append(t.content_view.render().el);
 
       return this;
     }

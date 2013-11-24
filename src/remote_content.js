@@ -1,38 +1,20 @@
-// ContentPaneView
+// RemoteContentView
+// Fetches content from a remote url for display in the main
+// frame.
 define(function (require) {
   var _ = require('underscore'),
     $ = require('jquery'),
-    Backbone = require('backbone');
+    Backbone = require('backbone'),
+    LocalContentView = require('./local_content');
 
-  var ContentPaneView = Backbone.View.extend({
-
-    tagName: 'div',
-
-    className: 'stfd-content-pane',
-
-
-    initialize: function(options) {
-      var t = this;
-      _.bindAll(t, 'render', 'render_content');
-      t.doc_model = options.doc_model;
-      t.query_model = options.query_model;
-      t.content_url_format = options.content_url_format;
-      t.content_url_template = Handlebars.compile(t.content_url_format);
-
-      t.listenTo(t.doc_model, 'change', t.render);
-    },
-
-    get_content_url: function() {
-      var content_url = this.content_url_template(this.doc_model.toJSON());
-      return content_url;
-    },
+  var RemoteContentView = LocalContentView.extend({
 
     render: function() {
+      // Override render to fetch content from remore resource
+      // as specified by get_content_url().
       var t = this;
       // If the doc model is populated, fetch the HTML content.
       if (!_.isEmpty(t.doc_model.toJSON())) {
-        // Clear current content so user expects new content to load.
-        t.$el.html('');
         $.ajax({
           type: 'GET',
           url: t.get_content_url(),
@@ -48,7 +30,6 @@ define(function (require) {
     },
 
     render_content: function(resp) {
-      console.log('success');
       // Render content into pane.
       var $content = $(resp.responseText);
       // Attempt to find inner content for standard RTD layout.
@@ -59,13 +40,18 @@ define(function (require) {
       this.$el.html($inner_content);
     },
 
+    get_content_url: function() {
+      var content_url = this.content_url_template(this.doc_model.toJSON());
+      return content_url;
+    },
+
     error: function() {
       console.log('error');
     }
 
   });
 
-  return ContentPaneView;
+  return RemoteContentView;
 
 });
 
