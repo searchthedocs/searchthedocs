@@ -7,16 +7,21 @@
 #stfd .navbar-form .form-group {
   width: 100%;
 }
+#stfd .navbar {
+  margin-bottom: 0px;
+}
 .stfd-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
   background-color: #f8f8f8;
   border-color: #e7e7e7;
-  position: fixed;
   -webkit-overflow-scrolling: touch;
   border-right: 1px solid #e7e7e7;
   font-family: Helvetica Neue, Helvetica, Arial;
-  top: 0; left: 0; bottom: 0;
   width: 25%;
-  padding: 0px 15px 0px 15px;
+  padding: 60px 15px 0px 15px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -31,5 +36,9 @@
   left: -2px;
   width: 1px;
   background-color: #e7e7e7;
+}
+.simple-list-item {
+  display: block;
+  color: #444;
 }
 

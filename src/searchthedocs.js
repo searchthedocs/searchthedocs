@@ -30,8 +30,10 @@ define(function (require) {
       // Create a model to represent the query params.
       t.query_model = new Backbone.Model();
 
+      // Create a debounced version of `send_query...`
+      t.send_query_debounced = _.debounce(t.send_query_to_executor, 100);
       // Bind to change events on the model.
-      t.listenTo(t.query_model, 'change', t.send_query_to_executor);
+      t.listenTo(t.query_model, 'change', t.send_query_debounced);
 
       // Create a search form view with the query model bound to it.
       t.search_form_view = new SearchFormView({
@@ -57,30 +59,35 @@ define(function (require) {
 
     send_query_to_executor: function() {
       var t = this;
-      // Send the JSONified model to the query executor.
-      var query_options = _.extend({}, t.query_model.toJSON());
-      query_options.success = t.query_success;
-      query_options.error = t.query_error;
+      // Only send query if search is not undefined.
+      if (t.query_model.get('search')) {
+        // Send the JSONified model to the query executor.
+        var query_options = _.extend({}, t.query_model.toJSON());
+        query_options.success = t.query_success;
+        query_options.error = t.query_error;
 
-      t.execute_query(query_options);
+        t.most_recent_xhr = t.execute_query(query_options);
+      } else {
+        // Unset results if no query was sent.
+        this.results_model.set('results', undefined);
+      }
     },
 
     query_success: function(results) {
-      console.log('success');
-      console.log(this);
       this.results_model.set('results', results);
     },
 
     query_error: function() {
       console.log('error');
-      console.log(this);
     },
 
     render: function() {
       var t = this;
 
       // Render sidebar
-      t.sidebar = new Sidebar();
+      t.sidebar = new Sidebar({
+        results_model: t.results_model
+      });
       t.$el.append(t.sidebar.render().el);
 
       // Render navbar

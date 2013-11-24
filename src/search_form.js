@@ -34,7 +34,10 @@ define(function (require) {
        var search_val = this.$('input').val();
        if (search_val.length > 2) {
          this.query_model.set('search', search_val);
-       }
+       } else {
+         // Unset the search if there are fewer than 3 characters.
+         this.query_model.set('search', undefined);
+      }
     }
 
   });

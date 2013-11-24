@@ -44,7 +44,11 @@ define(function (require) {
       // specified by `record_format`.
       var t = this;
       // Extract the raw records hash.
-      var raw_records = t.records_accessor(t.get('results'));
+      var results = t.get('results');
+      if (!results) {
+        return;
+      }
+      var raw_records = t.records_accessor(results);
 
       // Build the records from the raw records.
       return _.map(raw_records, function(raw_record) {

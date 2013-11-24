@@ -1,4 +1,4 @@
-// SearchFormView
+// Navbar
 define(function (require) {
   var _ = require('underscore'),
     $ = require('jquery'),
