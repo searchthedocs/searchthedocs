@@ -15,7 +15,7 @@ define(function (require) {
     return _.compose.apply(null, fn_list.reverse());
   };
 
-  var ResultModel = Backbone.Model.extend({
+  var ResultsModel = Backbone.Model.extend({
     // This model contains just one, complex attribute: `results`.
     // The `results` attribute gets replaced every time an API call result
     // is received, and the model serves to notify listeners of changes
@@ -66,6 +66,6 @@ define(function (require) {
 
   });
 
-  return ResultModel;
+  return ResultsModel;
 
 });

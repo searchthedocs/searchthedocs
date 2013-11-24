@@ -16,6 +16,7 @@ define(function (require) {
       var t = this;
       _.bindAll(t, 'render');
       t.results_model = options.results_model;
+      t.doc_model = options.doc_model;
 
       t.listenTo(t.results_model, 'change', t.render);
     },
@@ -27,7 +28,8 @@ define(function (require) {
 
       _.each(t.results_model.get_records(), function(record) {
         var record_view = new SimpleSearchListItemView({
-          record: record
+          record: record,
+          doc_model: t.doc_model
         });
         t.$el.append(record_view.render().el);
       });
