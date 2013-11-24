@@ -51,7 +51,7 @@ define(function (require) {
       var raw_records = t.records_accessor(results);
 
       // Build the records from the raw records.
-      return _.map(raw_records, function(raw_record) {
+      var records = _.map(raw_records, function(raw_record) {
         var record = {};
         // Apply each field accessor to the raw record.
         _.each(t.field_accessors, function(accessor, key) {
@@ -59,6 +59,9 @@ define(function (require) {
         });
         return record;
       });
+
+      // Sort the records by domain.
+      return _.sortBy(records, function(obj) {return obj.domain});
     }
 
   });
