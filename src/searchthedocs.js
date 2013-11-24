@@ -6,7 +6,8 @@ define(function (require) {
     Navbar = require('./navbar'),
     Sidebar = require('./sidebar'),
     SearchFormView = require('./search_form'),
-    ResultModel = require('./result_model'),
+    ResultsModel = require('./results_model'),
+    ContentPaneView = require('./content_pane'),
     configure_query_executor = require('./query_executor');
 
   var SearchTheDocsView = Backbone.View.extend({
@@ -23,15 +24,30 @@ define(function (require) {
 
       _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
 
-      // Default endpoint
+      // Set up default endpoint
       t.ep_name = t.search_options.default_endpoint;
-
       t.set_endpoint(t.ep_name);
+
+
+      // Create models
+
       // Create a model to represent the query params.
       t.query_model = new Backbone.Model();
 
+
+      // Create a model to represent the search results.
+      t.results_model = new ResultsModel(t.ep.result_format);
+
+      // Create a model to represent the currently chosen doc.
+      t.doc_model = new Backbone.Model();
+
+
+
+      // Set up model bindings
+
       // Create a debounced version of `send_query...`
       t.send_query_debounced = _.debounce(t.send_query_to_executor, 100);
+
       // Bind to change events on the model.
       t.listenTo(t.query_model, 'change', t.send_query_debounced);
 
@@ -40,7 +56,27 @@ define(function (require) {
         query_model: t.query_model
       });
 
-      t.results_model = new ResultModel(t.ep.result_format);
+      // Create a navbar, which contains the search form view.
+      t.navbar = new Navbar({
+        brand: t.brand,
+        brand_href: t.brand_href,
+        search_form_view: t.search_form_view
+      });
+
+      // Create a sidebar to show the search results,
+      // bound to the results model and the currently chosen doc model.
+      t.sidebar = new Sidebar({
+        results_model: t.results_model,
+        doc_model: t.doc_model
+      });
+
+      // Create view to show the document content,
+      // bound to the query model and the currently chosen doc model.
+      t.content_pane_view = new ContentPaneView({
+        doc_model: t.doc_model,
+        query_model: t.query_model,
+        content_url_format: t.ep.content_url_format
+      });
 
     },
 
@@ -85,18 +121,13 @@ define(function (require) {
       var t = this;
 
       // Render sidebar
-      t.sidebar = new Sidebar({
-        results_model: t.results_model
-      });
       t.$el.append(t.sidebar.render().el);
 
       // Render navbar
-      t.navbar = new Navbar({
-        brand: t.brand,
-        brand_href: t.brand_href,
-        search_form_view: t.search_form_view
-      });
       t.$el.append(t.navbar.render().el);
+
+      // Render content pane
+      t.$el.append(t.content_pane_view.render().el);
 
 
       return this;
