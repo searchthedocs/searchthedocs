@@ -1,4 +1,28 @@
+body {
+  height: 100%;
+}
+#searchthedocs-container {
+  position: relative;
+  height: 100%;
+}
+#stfd {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+#stfd .navbar {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin-bottom: 0px;
+}
 #stfd .navbar-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
 }
 #stfd .navbar-form {
@@ -7,8 +31,8 @@
 #stfd .navbar-form .form-group {
   width: 100%;
 }
-#stfd .navbar {
-  margin-bottom: 0px;
+#search-form-container input {
+  font-size: 120%;
 }
 .stfd-sidebar {
   position: fixed;
@@ -40,5 +64,23 @@
 .simple-list-item {
   display: block;
   color: #444;
+  padding: 5px;
+  font-size: 16px;
+  padding-left: 1.5em;
+  text-indent:-1.5em;
+
+}
+.simple-list-item .stfd-domain {
+  font-weight: bold;
 }
 
+.stfd-content-pane{
+  position: relative;
+  height: 100%;
+  font-family: Helvetica Neue, Helvetica, Arial;
+  width: 75%;
+  float: right;
+  padding: 0px 0px 0px 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
