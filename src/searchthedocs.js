@@ -3,9 +3,8 @@ define(function (require) {
   var _ = require('underscore'),
     $ = require('jquery'),
     Backbone = require('backbone'),
-    Navbar = require('./navbar'),
+    NavbarView = require('./navbar'),
     Sidebar = require('./sidebar'),
-    SearchFormView = require('./search_form'),
     ResultsModel = require('./results_model'),
     DocModel = require('./doc_model'),
     configure_query_executor = require('./query_executor');
@@ -56,17 +55,14 @@ define(function (require) {
 
       // Bind to change events on the model.
       t.listenTo(t.query_model, 'change', t.send_query_debounced);
+      t.listenTo(t.query_model, 'change', function() {console.log('changed')});
 
       // Create a search form view with the query model bound to it.
-      t.search_form_view = new SearchFormView({
-        query_model: t.query_model
-      });
 
       // Create a navbar, which contains the search form view.
-      t.navbar = new Navbar({
+      t.navbar = new NavbarView({
         brand: t.brand,
         brand_href: t.brand_href,
-        search_form_view: t.search_form_view,
         content_link_text: t.content_link_text,
         doc_model: t.doc_model,
         query_model: t.query_model
@@ -113,7 +109,7 @@ define(function (require) {
     send_query_to_executor: function() {
       var t = this;
       // Only send query if search is not undefined.
-      if (t.query_model.get('search')) {
+      if (!_.isUndefined(t.query_model.get('search'))) {
         // Send the JSONified model to the query executor.
         var query_options = _.extend({}, t.query_model.toJSON());
         query_options.success = t.query_success;

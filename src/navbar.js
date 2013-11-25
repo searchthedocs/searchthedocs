@@ -1,12 +1,14 @@
-// Navbar
+// NavbarView
 define(function (require) {
   var _ = require('underscore'),
     $ = require('jquery'),
     Backbone = require('backbone'),
     Handlebars = require('handlebars'),
-    navbar_tmpl = require('text!./tmpl/navbar.html');
+    navbar_tmpl = require('text!./tmpl/navbar.html'),
+    SearchFormView = require('./search_form'),
+    NavLinksView = require('./navlinks');
 
-  var Navbar = Backbone.View.extend({
+  var NavbarView = Backbone.View.extend({
 
     tagName: 'nav',
 
@@ -22,27 +24,34 @@ define(function (require) {
       t.content_link_text = options.content_link_text;
       t.search_form_view = options.search_form_view;
       t.doc_model = options.doc_model;
-
-      t.listenTo(t.doc_model, 'change', t.render);
+      t.query_model = options.query_model;
     },
 
     render: function() {
       var t = this;
-      t.$el.html(t.template({
-        brand: t.brand,
-        brand_href: t.brand_href,
-        content_url: t.doc_model.get_content_url(),
-        content_link_text: t.content_link_text
-      }));
+      // Template has no context.
+      t.$el.html(t.template());
 
       // Render search form subview into container
+      t.search_form_view = new SearchFormView({
+        query_model: t.query_model
+      });
       t.$('#search-form-container').html(t.search_form_view.render().el);
+
+      t.nav_links_view = new NavLinksView({
+        brand: t.brand,
+        brand_href: t.brand_href,
+        content_link_text: t.content_link_text,
+        doc_model: t.doc_model,
+      });
+      // Render nav links subview into container
+      t.$('#nav-links-container').html(t.nav_links_view.render().el);
       return t;
     }
 
   });
 
-  return Navbar;
+  return NavbarView;
 
 });
 
