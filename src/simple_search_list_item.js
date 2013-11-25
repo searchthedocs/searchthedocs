@@ -22,10 +22,18 @@ define(function (require) {
       var t = this;
       t.record = options.record;
       t.doc_model = options.doc_model;
+      t.query_model = options.query_model;
     },
 
     set_document: function() {
-      this.doc_model.set(this.record);
+      var t = this;
+      // Set the document attributes, including the search term.
+      var doc_obj = _.extend(
+          {},
+          t.record,
+          {search: t.query_model.get('search')}
+      );
+      t.doc_model.set(doc_obj);
     },
 
     render: function() {

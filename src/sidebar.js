@@ -17,6 +17,7 @@ define(function (require) {
       _.bindAll(t, 'render');
       t.results_model = options.results_model;
       t.doc_model = options.doc_model;
+      t.query_model = options.query_model;
 
       t.listenTo(t.results_model, 'change', t.render);
     },
@@ -29,7 +30,8 @@ define(function (require) {
       _.each(t.results_model.get_records(), function(record) {
         var record_view = new SimpleSearchListItemView({
           record: record,
-          doc_model: t.doc_model
+          doc_model: t.doc_model,
+          query_model: t.query_model
         });
         t.$el.append(record_view.render().el);
       });

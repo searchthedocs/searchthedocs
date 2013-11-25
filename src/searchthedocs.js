@@ -7,6 +7,7 @@ define(function (require) {
     Sidebar = require('./sidebar'),
     SearchFormView = require('./search_form'),
     ResultsModel = require('./results_model'),
+    DocModel = require('./doc_model'),
     configure_query_executor = require('./query_executor');
 
   var SearchTheDocsView = Backbone.View.extend({
@@ -20,14 +21,15 @@ define(function (require) {
       t.brand = options.brand;
       t.brand_href = options.brand_href;
       t.search_options = options.search_options;
+      t.content_link_text = options.content_link_text;
       t.class_map = options.class_map;
 
       _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
 
       // Set up default endpoint
+      // TODO: Allow endpoint switching.
       t.ep_name = t.search_options.default_endpoint;
       t.set_endpoint(t.ep_name);
-
 
       // Create models
 
@@ -39,8 +41,12 @@ define(function (require) {
       t.results_model = new ResultsModel(t.ep.result_format);
 
       // Create a model to represent the currently chosen doc.
-      t.doc_model = new Backbone.Model();
-
+      t.doc_model = new DocModel(
+        // initialize with empty attribues
+        {},
+        // initialize with content_url_format in options
+        {content_url_format: t.ep.content_url_format}
+      );
 
 
       // Set up model bindings
@@ -60,14 +66,18 @@ define(function (require) {
       t.navbar = new Navbar({
         brand: t.brand,
         brand_href: t.brand_href,
-        search_form_view: t.search_form_view
+        search_form_view: t.search_form_view,
+        content_link_text: t.content_link_text,
+        doc_model: t.doc_model,
+        query_model: t.query_model
       });
 
       // Create a sidebar to show the search results,
       // bound to the results model and the currently chosen doc model.
       t.sidebar = new Sidebar({
         results_model: t.results_model,
-        doc_model: t.doc_model
+        doc_model: t.doc_model,
+        query_model: t.query_model
       });
 
       // Create view to show the document content,

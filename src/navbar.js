@@ -16,16 +16,23 @@ define(function (require) {
 
     initialize: function(options) {
       var t = this;
+      _.bindAll(t, 'render');
       t.brand = options.brand;
       t.brand_href = options.brand_href;
+      t.content_link_text = options.content_link_text;
       t.search_form_view = options.search_form_view;
+      t.doc_model = options.doc_model;
+
+      t.listenTo(t.doc_model, 'change', t.render);
     },
 
     render: function() {
       var t = this;
       t.$el.html(t.template({
         brand: t.brand,
-        brand_href: t.brand_href
+        brand_href: t.brand_href,
+        content_url: t.doc_model.get_content_url(),
+        content_link_text: t.content_link_text
       }));
 
       // Render search form subview into container

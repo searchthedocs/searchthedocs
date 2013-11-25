@@ -62,7 +62,7 @@ define(function (require) {
 
       // Sort the records by domain.
       return _.sortBy(records, function(obj) {return obj.domain});
-    }
+    },
 
   });
 

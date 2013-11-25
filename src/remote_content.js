@@ -10,14 +10,14 @@ define(function (require) {
   var RemoteContentView = LocalContentView.extend({
 
     render: function() {
-      // Override render to fetch content from remore resource
-      // as specified by get_content_url().
+      // Override render to fetch content from remote resource
+      // as specified by get_content_url() of DocModel.
       var t = this;
       // If the doc model is populated, fetch the HTML content.
       if (!_.isEmpty(t.doc_model.toJSON())) {
         $.ajax({
           type: 'GET',
-          url: t.get_content_url(),
+          url: t.doc_model.get_content_url(),
           data: {
             highlight: t.query_model.get('search')
           },
@@ -38,11 +38,6 @@ define(function (require) {
         // fallback to unfiltered content.
         || $content;
       this.$el.html($inner_content);
-    },
-
-    get_content_url: function() {
-      var content_url = this.content_url_template(this.doc_model.toJSON());
-      return content_url;
     },
 
     error: function() {
