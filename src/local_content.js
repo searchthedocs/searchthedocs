@@ -16,8 +16,6 @@ define(function (require) {
       _.bindAll(t, 'render', 'render_content');
       t.doc_model = options.doc_model;
       t.query_model = options.query_model;
-      t.content_url_format = options.content_url_format;
-      t.content_url_template = Handlebars.compile(t.content_url_format);
 
       t.listenTo(t.doc_model, 'change', t.render);
     },
@@ -32,6 +30,7 @@ define(function (require) {
 
     render_content: function() {
       this.$el.html(this.doc_model.get('content'));
+      this.trigger('content_loaded', this.doc_model.toJSON());
     }
 
   });

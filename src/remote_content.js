@@ -38,6 +38,7 @@ define(function (require) {
         // fallback to unfiltered content.
         || $content;
       this.$el.html($inner_content);
+      this.trigger('content_loaded', this.doc_model.toJSON());
     },
 
     error: function() {

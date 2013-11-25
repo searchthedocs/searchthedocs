@@ -90,6 +90,11 @@ define(function (require) {
         content_url_format: t.ep.content_url_format
       });
 
+      // Proxy the content_loaded event to any external listeners.
+      t.content_view.on('content_loaded', function(doc_obj) {
+        t.trigger('content_loaded', doc_obj);
+      });
+
     },
 
     set_endpoint: function(ep_name) {
