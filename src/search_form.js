@@ -24,6 +24,7 @@ define(function (require) {
     initialize: function(options) {
       var t = this;
       t.query_model = options.query_model;
+      t.domain_list_model = options.domain_list_model;
       _.bindAll(t, 'set_query');
       t.listenTo(t.query_model, 'change:domain', t.render);
     },
@@ -52,7 +53,7 @@ define(function (require) {
        var search_val = t.$('input').val();
        if (e.keyCode == '9') {
          e.preventDefault();
-         if (_.contains(['readthedocs', 'searchthedocs'], search_val)) {
+         if (_.contains(t.domain_list_model.get('domains'), search_val)) {
            t.query_model.set('domain', search_val);
           t.$('input').val('');
          }

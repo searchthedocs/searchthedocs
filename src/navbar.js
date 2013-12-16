@@ -25,6 +25,7 @@ define(function (require) {
       t.search_form_view = options.search_form_view;
       t.doc_model = options.doc_model;
       t.query_model = options.query_model;
+      t.domain_list_model = options.domain_list_model;
     },
 
     render: function() {
@@ -34,7 +35,8 @@ define(function (require) {
 
       // Render search form subview into container
       t.search_form_view = new SearchFormView({
-        query_model: t.query_model
+        query_model: t.query_model,
+        domain_list_model: t.domain_list_model
       });
       t.$('#search-form-container').html(t.search_form_view.render().el);
 

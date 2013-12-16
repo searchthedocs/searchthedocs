@@ -36,6 +36,10 @@ define(function (require) {
       // Create a model to represent the query params.
       t.query_model = new Backbone.Model();
 
+      // Create a model to represent the list of domains and populate
+      // asynchronously.
+      t.domain_list_model = new Backbone.Model();
+      t.populate_domain_list();
 
       // Create a model to represent the search results.
       t.results_model = new ResultsModel(t.ep.result_format);
@@ -65,7 +69,8 @@ define(function (require) {
         brand_href: t.brand_href,
         content_link_text: t.content_link_text,
         doc_model: t.doc_model,
-        query_model: t.query_model
+        query_model: t.query_model,
+        domain_list_model: t.domain_list_model
       });
 
       // Create a sidebar to show the search results,
@@ -161,7 +166,21 @@ define(function (require) {
       // Trigger `visible` event on navbar, so that the SearchFormView
       // can re-render itself based on container size for the initial render.
       this.navbar.trigger('visible');
-     }
+    },
+
+    populate_domain_list: function() {
+      var t = this;
+      $.ajax({
+        dataType: 'json',
+        url: t.ep.domain_list_url,
+        success: function(data) {
+          var domains = _.map(data.results, function(name) {
+            return name.toLowerCase();
+          });
+          t.domain_list_model.set('domains', domains);
+        }
+      });
+    }
 
   });
 
