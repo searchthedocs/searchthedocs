@@ -17,12 +17,15 @@ define(function (require) {
     events: {
       'change input': 'set_query',
       'keyup input': 'set_query',
-      'input input': 'set_query'
+      'input input': 'set_query',
+      'keydown input': 'domain_match'
     },
 
     initialize: function(options) {
-      this.query_model = options.query_model;
-      _.bindAll(this, 'set_query');
+      var t = this;
+      t.query_model = options.query_model;
+      _.bindAll(t, 'set_query');
+      t.listenTo(t.query_model, 'change:domain', t.render);
     },
 
     render: function() {
@@ -42,13 +45,29 @@ define(function (require) {
       return t;
     },
 
+    domain_match: function(e) {
+       // If tab is pressed, check for a domain match.
+       var t = this;
+
+       var search_val = t.$('input').val();
+       if (e.keyCode == '9') {
+         e.preventDefault();
+         if (_.contains(['readthedocs', 'searchthedocs'], search_val)) {
+           t.query_model.set('domain', search_val);
+          t.$('input').val('');
+         }
+       }
+    },
+
     set_query: function() {
-       var search_val = this.$('input').val();
+       var t = this;
+       var search_val = t.$('input').val();
+
        if (search_val.length > 2) {
-         this.query_model.set('search', search_val);
+         t.query_model.set('search', search_val);
        } else {
          // Unset the search if there are fewer than 3 characters.
-         this.query_model.set('search', undefined);
+         t.query_model.set('search', undefined);
       }
     }
 
