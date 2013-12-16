@@ -22,8 +22,13 @@ define(function (require) {
 
     routes: {
       // Root will load the section search view.
-      "":                   "route_to_section_search",
+      "":                   "route_to_default_search",
       "section*params":     "route_to_section_search"
+    },
+
+    route_to_default_search: function() {
+      this.navigate('section');
+      this.route_to_section_search();
     },
 
     route_to_section_search: function(params) {
