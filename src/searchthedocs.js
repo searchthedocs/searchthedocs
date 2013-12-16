@@ -22,6 +22,7 @@ define(function (require) {
       t.search_options = options.search_options;
       t.content_link_text = options.content_link_text;
       t.class_map = options.class_map;
+      t.initial_params = options.initial_params;
 
       _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
 
@@ -89,6 +90,10 @@ define(function (require) {
       // Proxy the content_loaded event to any external listeners.
       t.content_view.on('content_loaded', function(doc_obj) {
         t.trigger('content_loaded', doc_obj);
+      });
+
+      t.query_model.set({
+        search: t.initial_params.q
       });
 
     },

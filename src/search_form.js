@@ -26,7 +26,7 @@ define(function (require) {
     },
 
     render: function() {
-      this.$el.html(this.template());
+      this.$el.html(this.template(this.query_model.toJSON()));
       return this;
     },
 
