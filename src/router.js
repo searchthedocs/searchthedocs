@@ -39,6 +39,7 @@ define(function (require) {
       t.section_search = new SearchTheDocsView(t.options);
       // Render the section search view into the container given in options.
       $(t.options.container).html(t.section_search.render().el);
+      t.section_search.visible();
     },
 
     get_url_parameters: function() {

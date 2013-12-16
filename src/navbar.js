@@ -38,6 +38,12 @@ define(function (require) {
       });
       t.$('#search-form-container').html(t.search_form_view.render().el);
 
+      // Trigger re-render of SearchFormView when it becomes visible,
+      // to allow the view to adjust to its container size.
+      t.on('visible', function() {
+        t.search_form_view.render();
+      });
+
       t.nav_links_view = new NavLinksView({
         brand: t.brand,
         brand_href: t.brand_href,
@@ -47,7 +53,7 @@ define(function (require) {
       // Render nav links subview into container
       t.$('#nav-links-container').html(t.nav_links_view.render().el);
       return t;
-    }
+    },
 
   });
 

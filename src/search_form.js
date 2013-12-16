@@ -26,8 +26,20 @@ define(function (require) {
     },
 
     render: function() {
-      this.$el.html(this.template(this.query_model.toJSON()));
-      return this;
+      var t = this;
+      t.$el.html(t.template(t.query_model.toJSON()));
+
+
+      // Determine size of domain bubble and adjust input width
+      var bubble = t.$('.domain-bubble');
+      if (bubble.length > 0) {
+        var bubble_width = bubble.width();
+        var input_width = t.$('.search-input-container').width();
+        var new_input_width = input_width - bubble_width - 1;
+        t.$('input').css({width: new_input_width});
+      }
+
+      return t;
     },
 
     set_query: function() {

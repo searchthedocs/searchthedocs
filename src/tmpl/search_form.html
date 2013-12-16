@@ -1,3 +1,6 @@
-<div class="form-group">
+<div class="form-group search-input-container">
+  {{~#if domain~}}
+  <span class="domain-bubble">{{domain}}</span>
+  {{~/if~}}
   <input type="text" class="form-control" value={{search}}>
 </div>

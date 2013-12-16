@@ -56,7 +56,6 @@ define(function (require) {
 
       // Bind to change events on the model.
       t.listenTo(t.query_model, 'change', t.send_query_debounced);
-      t.listenTo(t.query_model, 'change', function() {console.log('changed')});
 
       // Create a search form view with the query model bound to it.
 
@@ -93,7 +92,8 @@ define(function (require) {
       });
 
       t.query_model.set({
-        search: t.initial_params.q
+        search: t.initial_params[t.ep.param_map.search],
+        domain: t.initial_params[t.ep.param_map.domain]
       });
 
     },
@@ -147,8 +147,21 @@ define(function (require) {
       // Render content pane
       t.$el.append(t.content_view.render().el);
 
+
       return this;
-    }
+    },
+
+    visible: function() {
+      // Function to be called once this view actually becomes visible in
+      // the DOM.
+
+      // Trigger 'view_loaded' event
+      this.trigger('view_loaded');
+
+      // Trigger `visible` event on navbar, so that the SearchFormView
+      // can re-render itself based on container size for the initial render.
+      this.navbar.trigger('visible');
+     }
 
   });
 
