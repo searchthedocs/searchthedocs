@@ -4,7 +4,8 @@ define(function (require) {
     $ = require('jquery'),
     Backbone = require('backbone'),
     Handlebars = require('handlebars'),
-    search_form_tmpl = require('text!./tmpl/search_form.html');
+    search_form_tmpl = require('text!./tmpl/search_form.html'),
+    filter_to_matching_stems = require('./filter_to_matching_stems');
 
   var SearchFormView = Backbone.View.extend({
 
@@ -51,16 +52,69 @@ define(function (require) {
        var t = this;
 
        var search_val = t.$('input').val();
-       if (e.keyCode == '9') {
-         e.preventDefault();
-         _.each(t.domain_list_model.get('domains'), function(domain) {
-           var domain_stem = domain.slice(0, search_val.length);
-           console.log(domain_stem);
-           if (domain_stem === search_val) {
-             t.query_model.set('domain', domain);
+
+       // If we don't already have a domain filter, try to complete one.
+       if (!t.query_model.get('domain')) {
+
+         // Step 1: Filter to domains with stems matching the search string.
+         var domains_matching_stem = filter_to_matching_stems({
+           search: search_val,
+           array: t.domain_list_model.get('domains')
+          });
+
+         if (e.keyCode == '9') {
+           e.preventDefault();
+
+           // Step 2: Set domain on query model if exact match
+           // and if this is the second time the user hits tab after
+           // a completion.
+           if (domains_matching_stem.length === 1 && t.in_completion) {
+             t.query_model.set('domain', search_val);
+             t.$('input').val('');
+             return;
            }
-         });
-         t.$('input').val('');
+
+           // Keep track of when we are in the middle of a completion.
+           if (domains_matching_stem.length > 0) {
+             t.in_completion = true;
+           }
+
+           // Step 3: Find longest stem matching all filtered domains.
+           var initial_stem_length = search_val.length + 1;
+           var domain_match = domains_matching_stem[0];
+           var max_stem_length = domain_match.length;
+           var longest_matching_stem = search_val;
+           console.log(domains_matching_stem);
+           for (var i = initial_stem_length; i < max_stem_length; i++) {
+             var new_stem = domain_match.slice(0, i);
+             var all_matching = _.all(domains_matching_stem, function(domain) {
+               return new_stem === domain.slice(0, i);
+             });
+             if (!all_matching) {
+               break;
+             } else {
+               longest_matching_stem = new_stem;
+             }
+           }
+           console.log(longest_matching_stem);
+
+           t.$('input').val(longest_matching_stem);
+         } else {
+           // If we are in the middle of a completion, and space
+           // is pressed...
+           if (t.in_completion && e.keyCode == '32') {
+             console.log('in completion, space pressed');
+             // And the matches contain an exact match, finish the completion
+             // with the search value.
+             if (_.contains(domains_matching_stem, search_val)) {
+               e.preventDefault();
+               t.query_model.set('domain', search_val.trim());
+               t.$('input').val('');
+               return;
+             }
+           }
+           t.in_completion = false;
+         }
        }
     },
 
