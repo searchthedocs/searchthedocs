@@ -53,10 +53,14 @@ define(function (require) {
        var search_val = t.$('input').val();
        if (e.keyCode == '9') {
          e.preventDefault();
-         if (_.contains(t.domain_list_model.get('domains'), search_val)) {
-           t.query_model.set('domain', search_val);
-          t.$('input').val('');
-         }
+         _.each(t.domain_list_model.get('domains'), function(domain) {
+           var domain_stem = domain.slice(0, search_val.length);
+           console.log(domain_stem);
+           if (domain_stem === search_val) {
+             t.query_model.set('domain', domain);
+           }
+         });
+         t.$('input').val('');
        }
     },
 
