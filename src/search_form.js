@@ -5,7 +5,8 @@ define(function (require) {
     Backbone = require('backbone'),
     Handlebars = require('handlebars'),
     search_form_tmpl = require('text!./tmpl/search_form.html'),
-    filter_to_matching_stems = require('./filter_to_matching_stems');
+    filter_to_matching_stems = require('./filter_to_matching_stems'),
+    SuggestionsView = require('./suggestions');
 
   var SearchFormView = Backbone.View.extend({
 
@@ -28,11 +29,18 @@ define(function (require) {
       t.domain_list_model = options.domain_list_model;
       _.bindAll(t, 'set_query');
       t.listenTo(t.query_model, 'change:domain', t.render);
+
+      t.suggestions_model = new Backbone.Model();
+      t.suggestions_view = new SuggestionsView({
+        suggestions_model: t.suggestions_model
+      });
     },
 
     render: function() {
       var t = this;
       t.$el.html(t.template(t.query_model.toJSON()));
+
+      t.$el.append(t.suggestions_view.render().el);
 
 
       // Determine size of domain bubble and adjust input width
@@ -68,10 +76,16 @@ define(function (require) {
            // Step 2: Set domain on query model if exact match
            // and if this is the second time the user hits tab after
            // a completion.
-           if (domains_matching_stem.length === 1 && t.in_completion) {
-             t.query_model.set('domain', search_val);
-             t.$('input').val('');
-             return;
+           if (t.in_completion) {
+             if (domains_matching_stem.length === 1) {
+               t.query_model.set('domain', search_val);
+               t.$('input').val('');
+               t.suggestions_model.unset('suggestions');
+               return;
+             } else {
+               // Render a list of suggestions if multiple matches
+               t.suggestions_model.set('suggestions', domains_matching_stem);
+             }
            }
 
            // Keep track of when we are in the middle of a completion.
@@ -100,6 +114,8 @@ define(function (require) {
 
            t.$('input').val(longest_matching_stem);
          } else {
+           // If tab is not pressed, remove suggestions.
+           t.suggestions_model.unset('suggestions');
            // If we are in the middle of a completion, and space
            // is pressed...
            if (t.in_completion && e.keyCode == '32') {
