@@ -197,7 +197,7 @@ define(function (require) {
       // Hack to clear url before resetting query string.
       Backbone.history.navigate('', {replace: true});
 
-      qs = t.query_model.to_query_string();
+      var qs = t.query_model.to_query_string();
       if (qs) {
         Backbone.history.navigate('section?' + t.query_model.to_query_string());
       } else {

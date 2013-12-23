@@ -84,20 +84,16 @@ define(function (require) {
          if (e.keyCode == '9') {
            e.preventDefault();
 
-           // Step 2: Set domain on query model if exact match
-           // and if this is the second time the user hits tab after
-           // a completion.
-           if (t.in_completion) {
-             if (domains_matching_stem.length === 1) {
-               t.query_model.set('domain', search_val);
-               t.$('input').val('');
-               t.suggestions_model.unset('suggestions');
-               t.in_completion = false;
-               return;
-             } else {
-               // Render a list of suggestions if multiple matches
-               t.suggestions_model.set('suggestions', domains_matching_stem);
-             }
+           // Step 2: Set domain on query model if exact match.
+           if (domains_matching_stem.length === 1) {
+             t.query_model.set('domain', domains_matching_stem[0]);
+             t.$('input').val('');
+             t.suggestions_model.unset('suggestions');
+             t.in_completion = false;
+             return;
+           } else {
+             // Render a list of suggestions if multiple matches
+             t.suggestions_model.set('suggestions', domains_matching_stem);
            }
 
            // Keep track of when we are in the middle of a completion.
@@ -109,7 +105,7 @@ define(function (require) {
              var domain_match = domains_matching_stem[0];
              var max_stem_length = domain_match.length;
              var longest_matching_stem = search_val;
-             for (var i = initial_stem_length; i < max_stem_length; i++) {
+             for (var i = initial_stem_length; i <= max_stem_length; i++) {
                var new_stem = domain_match.slice(0, i);
                var all_matching = _.all(domains_matching_stem, function(domain) {
                  return new_stem === domain.slice(0, i);
