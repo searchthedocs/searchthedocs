@@ -79,6 +79,7 @@ define(function (require) {
                t.query_model.set('domain', search_val);
                t.$('input').val('');
                t.suggestions_model.unset('suggestions');
+               t.in_completion = false;
                return;
              } else {
                // Render a list of suggestions if multiple matches
@@ -124,7 +125,6 @@ define(function (require) {
                e.preventDefault();
                t.query_model.set('domain', search_val.trim());
                t.$('input').val('');
-               return;
              }
            }
            t.in_completion = false;
