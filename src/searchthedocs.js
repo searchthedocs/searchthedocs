@@ -7,6 +7,7 @@ define(function (require) {
     Sidebar = require('./sidebar'),
     ResultsModel = require('./results_model'),
     DocModel = require('./doc_model'),
+    QueryModel = require('./query_model'),
     configure_query_executor = require('./query_executor');
 
   var SearchTheDocsView = Backbone.View.extend({
@@ -24,7 +25,12 @@ define(function (require) {
       t.class_map = options.class_map;
       t.initial_params = options.initial_params;
 
-      _.bindAll(t, 'send_query_to_executor', 'query_success', 'query_error');
+      _.bindAll(t,
+        'send_query_to_executor',
+        'query_success',
+        'query_error',
+        'navigate_to_query'
+      );
 
       // Set up default endpoint
       // TODO: Allow endpoint switching.
@@ -34,7 +40,9 @@ define(function (require) {
       // Create models
 
       // Create a model to represent the query params.
-      t.query_model = new Backbone.Model();
+      t.query_model = new QueryModel({}, {
+        param_map: t.ep.param_map
+      });
 
       // Create a model to represent the list of domains and populate
       // asynchronously.
@@ -51,7 +59,6 @@ define(function (require) {
         // initialize with content_url_format in options
         {content_url_format: t.ep.content_url_format}
       );
-
 
       // Set up model bindings
 
@@ -119,6 +126,7 @@ define(function (require) {
     send_query_to_executor: function() {
       var t = this;
       // Only send query if search is not undefined.
+      t.navigate_to_query();
       if (!_.isUndefined(t.query_model.get('search'))) {
         // Send the JSONified model to the query executor.
         var query_options = _.extend({}, t.query_model.toJSON());
@@ -180,6 +188,21 @@ define(function (require) {
           t.domain_list_model.set('domains', domains);
         }
       });
+    },
+
+    navigate_to_query: function() {
+      // Change the url in response to query model changes.
+      var t = this;
+
+      // Hack to clear url before resetting query string.
+      Backbone.history.navigate('', {replace: true});
+
+      qs = t.query_model.to_query_string();
+      if (qs) {
+        Backbone.history.navigate('section?' + t.query_model.to_query_string());
+      } else {
+        Backbone.history.navigate('section');
+      }
     }
 
   });
