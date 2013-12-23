@@ -96,7 +96,6 @@ define(function (require) {
              var domain_match = domains_matching_stem[0];
              var max_stem_length = domain_match.length;
              var longest_matching_stem = search_val;
-             console.log(domains_matching_stem);
              for (var i = initial_stem_length; i < max_stem_length; i++) {
                var new_stem = domain_match.slice(0, i);
                var all_matching = _.all(domains_matching_stem, function(domain) {
@@ -108,7 +107,6 @@ define(function (require) {
                  longest_matching_stem = new_stem;
                }
              }
-             console.log(longest_matching_stem);
              t.$('input').val(longest_matching_stem);
            }
 
@@ -118,7 +116,6 @@ define(function (require) {
            // If we are in the middle of a completion, and space
            // is pressed...
            if (t.in_completion && e.keyCode == '32') {
-             console.log('in completion, space pressed');
              // And the matches contain an exact match, finish the completion
              // with the search value.
              if (_.contains(domains_matching_stem, search_val)) {
