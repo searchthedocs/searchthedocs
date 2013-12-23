@@ -91,28 +91,28 @@ define(function (require) {
            // Keep track of when we are in the middle of a completion.
            if (domains_matching_stem.length > 0) {
              t.in_completion = true;
-           }
 
-           // Step 3: Find longest stem matching all filtered domains.
-           var initial_stem_length = search_val.length + 1;
-           var domain_match = domains_matching_stem[0];
-           var max_stem_length = domain_match.length;
-           var longest_matching_stem = search_val;
-           console.log(domains_matching_stem);
-           for (var i = initial_stem_length; i < max_stem_length; i++) {
-             var new_stem = domain_match.slice(0, i);
-             var all_matching = _.all(domains_matching_stem, function(domain) {
-               return new_stem === domain.slice(0, i);
-             });
-             if (!all_matching) {
-               break;
-             } else {
-               longest_matching_stem = new_stem;
+             // Step 3: Find longest stem matching all filtered domains.
+             var initial_stem_length = search_val.length + 1;
+             var domain_match = domains_matching_stem[0];
+             var max_stem_length = domain_match.length;
+             var longest_matching_stem = search_val;
+             console.log(domains_matching_stem);
+             for (var i = initial_stem_length; i < max_stem_length; i++) {
+               var new_stem = domain_match.slice(0, i);
+               var all_matching = _.all(domains_matching_stem, function(domain) {
+                 return new_stem === domain.slice(0, i);
+               });
+               if (!all_matching) {
+                 break;
+               } else {
+                 longest_matching_stem = new_stem;
+               }
              }
+             console.log(longest_matching_stem);
+             t.$('input').val(longest_matching_stem);
            }
-           console.log(longest_matching_stem);
 
-           t.$('input').val(longest_matching_stem);
          } else {
            // If tab is not pressed, remove suggestions.
            t.suggestions_model.unset('suggestions');
@@ -138,10 +138,11 @@ define(function (require) {
        var t = this;
        var search_val = t.$('input').val();
 
-       if (search_val.length > 2) {
+       if (search_val.length > 2 && !t.in_completion) {
          t.query_model.set('search', search_val);
        } else {
-         // Unset the search if there are fewer than 3 characters.
+         // Unset the search if there are fewer than 3 characters
+         // or if we are in the middle of a completion.
          t.query_model.set('search', undefined);
       }
     }
