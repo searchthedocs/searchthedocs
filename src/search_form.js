@@ -17,17 +17,30 @@ define(function (require) {
     template: Handlebars.compile(search_form_tmpl),
 
     events: {
-      'change input': 'set_query',
-      'keyup input': 'set_query',
-      'input input': 'set_query',
-      'keydown input': 'domain_match'
+      'input input': 'input_events',
+      'keyup input': 'input_events',
+      'keydown input': 'keydown_events'
+    },
+
+    input_events: function(e) {
+      // Wrap events that should be called after a new input is received.
+      var t = this;
+      t.set_query(e);
+    },
+
+    keydown_events: function(e) {
+      // Wrap events that should be called before a new input is received,
+      // ie. to override the default key action.
+      var t = this;
+      t.domain_match(e);
+      t.unset_domain(e);
     },
 
     initialize: function(options) {
       var t = this;
       t.query_model = options.query_model;
       t.domain_list_model = options.domain_list_model;
-      _.bindAll(t, 'set_query');
+      _.bindAll(t, 'input_events', 'keydown_events');
       t.listenTo(t.query_model, 'change:domain', t.render);
 
       t.suggestions_model = new Backbone.Model();
@@ -115,7 +128,7 @@ define(function (require) {
            t.suggestions_model.unset('suggestions');
            // If we are in the middle of a completion, and space
            // is pressed...
-           if (t.in_completion && e.keyCode == '32') {
+           if (e.keyCode == '32' && t.in_completion) {
              // And the matches contain an exact match, finish the completion
              // with the search value.
              if (_.contains(domains_matching_stem, search_val)) {
@@ -127,6 +140,18 @@ define(function (require) {
            t.in_completion = false;
          }
        }
+    },
+
+    unset_domain: function(e) {
+      // If backspace is pressed, and there is no value
+      // in the input, remove the domain.
+      var t = this;
+      var search_val = t.$('input').val();
+
+      if (e.keyCode == '8' && search_val.length == 0) {
+        e.preventDefault();
+        t.query_model.unset('domain');
+      }
     },
 
     set_query: function() {
