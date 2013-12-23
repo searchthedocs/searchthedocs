@@ -46,10 +46,8 @@ define(function (require) {
       // Determine size of domain bubble and adjust input width
       var bubble = t.$('.domain-bubble');
       if (bubble.length > 0) {
-        var bubble_width = bubble.width();
-        var input_width = t.$('.search-input-container').width();
-        var new_input_width = input_width - bubble_width - 1;
-        t.$('input').css({width: new_input_width});
+        var bubble_width = bubble.outerWidth();
+        t.$('input').css('padding-left', bubble_width + 6);
       }
 
       return t;
