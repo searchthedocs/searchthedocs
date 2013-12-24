@@ -13,7 +13,7 @@ define(function (require) {
 
     initialize: function(options) {
       var t = this;
-      _.bindAll(t, 'render', 'render_content');
+      _.bindAll(t, 'render');
       t.doc_model = options.doc_model;
       t.query_model = options.query_model;
 
@@ -23,14 +23,13 @@ define(function (require) {
     render: function() {
       // If the doc model is populated, load the content from the API.
       if (!_.isEmpty(this.doc_model.toJSON())) {
-        this.render_content();
+        this.$el.html(this.doc_model.get('content'));
+        // Trigger a global `content_loaded` event.
+        Backbone.trigger('content_loaded', this.doc_model.toJSON());
+      } else {
+        this.$el.html('');
       }
       return this;
-    },
-
-    render_content: function() {
-      this.$el.html(this.doc_model.get('content'));
-      Backbone.trigger('content_loaded', this.doc_model.toJSON());
     }
 
   });

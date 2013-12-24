@@ -47,6 +47,9 @@ define(function (require) {
             {search: t.query_model.get('search')}
         );
         t.doc_model.set(doc_obj);
+      } else {
+        // Clear the document if no match in results.
+        t.doc_model.clear();
       }
 
       return t;
