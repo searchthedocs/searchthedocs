@@ -27,7 +27,10 @@ define(function (require) {
       // Clear existing items.
       t.$el.html('');
 
-      _.each(t.results_model.get_records(), function(record) {
+      var records = t.results_model.get_records();
+
+      // Create a list item view for each record in the results.
+      _.each(records, function(record) {
         var record_view = new SimpleSearchListItemView({
           record: record,
           doc_model: t.doc_model,
@@ -35,6 +38,17 @@ define(function (require) {
         });
         t.$el.append(record_view.render().el);
       });
+
+      // Set the current document to the first result, if any.
+      if (records && records.length > 0) {
+        var doc_obj = _.extend(
+            {},
+            records[0],
+            {search: t.query_model.get('search')}
+        );
+        t.doc_model.set(doc_obj);
+      }
+
       return t;
     }
 
