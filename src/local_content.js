@@ -30,7 +30,7 @@ define(function (require) {
 
     render_content: function() {
       this.$el.html(this.doc_model.get('content'));
-      this.trigger('content_loaded', this.doc_model.toJSON());
+      Backbone.trigger('content_loaded', this.doc_model.toJSON());
     }
 
   });
