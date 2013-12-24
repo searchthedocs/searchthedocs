@@ -22,7 +22,9 @@ define(function (require) {
       var data = _.extend({}, default_params);
 
       // Add the search param, and optionally the domain param to data object.
-      data[param_map['search']] = search;
+      // Hack: Use domain as search if no search term so that a domain-filtered
+      // query without a search value returns results.
+      data[param_map['search']] = search || domain;
       if (domain) {
         data[param_map['domain']] = domain;
       }

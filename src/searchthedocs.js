@@ -120,9 +120,12 @@ define(function (require) {
 
     send_query_to_executor: function() {
       var t = this;
-      // Only send query if search is not undefined.
+      // Send query if either search and domain have values.
       t.navigate_to_query();
-      if (!_.isUndefined(t.query_model.get('search'))) {
+      if (
+          t.query_model.get('search')
+          || t.query_model.get('domain')
+      ) {
         // Send the JSONified model to the query executor.
         var query_options = _.extend({}, t.query_model.toJSON());
         query_options.success = t.query_success;
