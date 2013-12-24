@@ -154,11 +154,18 @@ define(function (require) {
        var t = this;
        var search_val = t.$('input').val();
 
-       if (search_val.length > 2 && !t.in_completion) {
+       // Unset the search if:
+       //  - there are more than 2 characters or there is a domain filter
+       //  - and we are not in the middle of a completion.
+       if (
+         search_val && (
+           search_val.length > 2
+           || (t.query_model.get('domain')))
+         && !t.in_completion
+       ) {
          t.query_model.set('search', search_val);
        } else {
-         // Unset the search if there are fewer than 3 characters
-         // or if we are in the middle of a completion.
+         console.log('unset search');
          t.query_model.set('search', undefined);
       }
     }
