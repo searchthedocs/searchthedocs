@@ -27,6 +27,11 @@ define(function (require) {
 
     set_document: function() {
       var t = this;
+      // Remove active class from other doc links
+      $('.simple-list-item').removeClass('active');
+      // Add class to style selected doc link
+      t.$el.addClass('active');
+
       // Set the document attributes, including the search term.
       var doc_obj = _.extend(
           {},
