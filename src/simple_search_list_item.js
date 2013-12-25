@@ -43,7 +43,14 @@ define(function (require) {
 
     render: function() {
       var t = this;
-      t.$el.html(t.template(t.record));
+      var context = {
+        title: t.record.title
+      }
+      // Add domain to context if the current search is unscoped
+      if (!t.query_model.get('domain')) {
+        context['domain'] = t.record.domain;
+      }
+      t.$el.html(t.template(context));
       return t;
     }
 
