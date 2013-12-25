@@ -26,16 +26,22 @@ define(function (require) {
       var t = this;
       t.records_path = options.records_path;
       t.record_format = options.record_format;
+      t.domain_facets_path = options.domain_facets_path;
+      t.domain_facets_format = options.domain_facets_format;
 
       // Create accessors.
       // Create records accessor.
-      t.records_accessor = create_accessor(t.records_path)
+      t.records_accessor = create_accessor(t.records_path);
 
       // Create a map of field accessors.
       t.field_accessors = {};
       _.each(t.record_format, function(path_string, key) {
         t.field_accessors[key] = create_accessor(path_string);
       });
+
+      // Create domain facet accessor
+      t.domain_facets_accessor = create_accessor(t.domain_facets_path);
+      t.domain_accessor = create_accessor(t.domain_facets_format.domain);
 
     },
 
@@ -63,6 +69,24 @@ define(function (require) {
       // Sort the records by domain.
       return _.sortBy(records, function(obj) {return obj.domain});
     },
+
+    get_domain_facets: function() {
+      // Extract records from the raw result in a flattened format
+      // specified by `domain_facets_format`.
+      var t = this;
+      // Extract the raw records hash.
+      var results = t.get('results');
+      if (!results) {
+        return;
+      }
+      var raw_records = t.domain_facets_accessor(results);
+
+      // Build the list of domain strings from the raw records.
+      var domains = _.map(raw_records, function(raw_record) {
+        return t.domain_accessor(raw_record);
+      });
+      return domains;
+    }
 
   });
 
