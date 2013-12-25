@@ -104,4 +104,13 @@ body {
   position: absolute;
   padding: 7px 20px 7px 20px;
 }
+.domain-suggestions {
+  margin: 0 10px 10px 10px;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 12px;
+}
+.domain-suggestions .search-term {
+  font-weight: bold;
+}
 
