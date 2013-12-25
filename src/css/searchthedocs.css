@@ -110,7 +110,13 @@ body {
   padding: 10px;
   border-radius: 12px;
 }
+.domain-suggestions .domain-links {
+  word-spacing: 10px;
+}
 .domain-suggestions .search-term {
   font-weight: bold;
+}
+.domain-suggestions [data-link-type="domain"] {
+  display:inline-block
 }
 

@@ -38,23 +38,20 @@ define(function (require) {
       var records = t.results_model.get_records();
 
       // Create a list item view for each record in the results.
+      t.record_views = [];
       _.each(records, function(record) {
         var record_view = new SimpleSearchListItemView({
           record: record,
           doc_model: t.doc_model,
           query_model: t.query_model
         });
+        t.record_views.push(record_view);
         t.$el.append(record_view.render().el);
       });
 
       // Set the current document to the first result, if any.
-      if (records && records.length > 0) {
-        var doc_obj = _.extend(
-            {},
-            records[0],
-            {search: t.query_model.get('search')}
-        );
-        t.doc_model.set(doc_obj);
+      if (t.record_views.length > 0) {
+        t.record_views[0].set_document();
       } else {
         // Clear the document if no match in results.
         t.doc_model.clear();
