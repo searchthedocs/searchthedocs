@@ -32,6 +32,15 @@ define(function (require) {
       // Wrap events that should be called before a new input is received,
       // ie. to override the default key action.
       var t = this;
+
+
+      // Ignore "return" keypresses, which would otherwise trigger a reload.
+      if (e.keyCode == '13') {
+        console.log('');
+        e.preventDefault();
+        return;
+      }
+
       t.domain_match(e);
       t.unset_domain(e);
     },
@@ -71,6 +80,7 @@ define(function (require) {
        var t = this;
 
        var search_val = t.$('input').val();
+
 
        // If we don't already have a domain filter, try to complete one.
        if (!t.query_model.get('domain')) {
