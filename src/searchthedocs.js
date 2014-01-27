@@ -171,7 +171,6 @@ define(function (require) {
 
       // Trigger 'view_loaded' event
       Backbone.trigger('view_loaded');
-      console.log('vis');
 
       // Trigger `visible` event on navbar, so that the SearchFormView
       // can re-render itself based on container size for the initial render.

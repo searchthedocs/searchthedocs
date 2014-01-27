@@ -8,9 +8,11 @@ define(function (require) {
 
   var DomainSuggestionPanel = Backbone.View.extend({
 
-    tagName: 'p',
+    tagName: 'div',
 
-    className: 'domain-suggestions alert alert-info',
+    attributes: {
+      'data-view-name': 'suggestion-panel-container',
+    },
 
     events: {
       'click [data-link-type="domain"]': 'set_domain',
