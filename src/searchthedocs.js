@@ -1,16 +1,17 @@
 // SearchTheDocsView
 define(function (require) {
-  var _ = require('underscore'),
-    $ = require('jquery'),
-    Backbone = require('backbone'),
-    NavbarView = require('./navbar'),
-    Sidebar = require('./sidebar'),
-    ResultsModel = require('./results_model'),
-    DocModel = require('./doc_model'),
-    QueryModel = require('./query_model'),
-    configure_query_executor = require('./query_executor');
+  var _ = require('underscore');
+  var $ = require('jquery');
+  var Backbone = require('backbone');
+  var NavbarView = require('./navbar');
+  var Sidebar = require('./sidebar');
+  var ResultsModel = require('./results_model');
+  var DocModel = require('./doc_model');
+  var QueryModel = require('./query_model');
+  var configure_query_executor = require('./query_executor');
+  var VisEventsView = require('./vis_events_view');
 
-  var SearchTheDocsView = Backbone.View.extend({
+  var SearchTheDocsView = VisEventsView.extend({
 
     id: 'stfd',
 
@@ -103,6 +104,9 @@ define(function (require) {
         domain: t.initial_params[t.ep.param_map.domain]
       });
 
+      t.setup_vis_events();
+      t.on('visible', t.do_visible);
+
     },
 
     set_endpoint: function(ep_name) {
@@ -158,16 +162,16 @@ define(function (require) {
       // Render content pane
       t.$el.append(t.content_view.render().el);
 
-
       return this;
     },
 
-    visible: function() {
+    do_visible: function() {
       // Function to be called once this view actually becomes visible in
       // the DOM.
 
       // Trigger 'view_loaded' event
-      this.trigger('view_loaded');
+      Backbone.trigger('view_loaded');
+      console.log('vis');
 
       // Trigger `visible` event on navbar, so that the SearchFormView
       // can re-render itself based on container size for the initial render.
