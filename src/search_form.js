@@ -37,7 +37,6 @@ define(function (require) {
 
       // Ignore "return" keypresses, which would otherwise trigger a reload.
       if (e.keyCode == '13') {
-        console.log('');
         e.preventDefault();
         return;
       }
@@ -63,7 +62,6 @@ define(function (require) {
     },
 
     render: function() {
-      console.log('form render');
       var t = this;
       t.$el.html(t.template(t.query_model.toJSON()));
 
@@ -106,7 +104,7 @@ define(function (require) {
 
            // Step 2: Set domain on query model if exact match.
            if (domains_matching_stem.length === 1) {
-             t.query_model.set('domain', domains_matching_stem[0]);
+             t.set_domain(domains_matching_stem[0]);
              t.$('input').val('');
              t.suggestions_model.unset('suggestions');
              t.in_completion = false;
@@ -149,13 +147,19 @@ define(function (require) {
              // with the search value.
              if (_.contains(domains_matching_stem, search_val)) {
                e.preventDefault();
-               t.query_model.set('domain', search_val.trim());
+               t.set_domain(search_val.trim());
                t.$('input').val('');
              }
            }
            t.in_completion = false;
          }
        }
+    },
+
+    set_domain: function(domain_val) {
+      this.query_model.set('domain', domain_val);
+      // Notify any listeners that user has made a successful domain completion.
+      Backbone.trigger('domain_completion', domain_val);
     },
 
     unset_domain: function(e) {
@@ -185,7 +189,6 @@ define(function (require) {
        ) {
          t.query_model.set('search', search_val);
        } else {
-         console.log('unset search');
          t.query_model.set('search', undefined);
       }
     }
