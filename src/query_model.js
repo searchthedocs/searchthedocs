@@ -22,7 +22,14 @@ define(function (require) {
 
       // Use jQuery to turn the object into a query string.
       return $.param(query_model_repr);
-    }
+    },
+
+    set_domain: function(domain_val) {
+      this.set('domain', domain_val);
+      // Notify any listeners that user has made a successful domain completion.
+      Backbone.trigger('domain_completion', domain_val);
+    },
+
   });
 
   return QueryModel;

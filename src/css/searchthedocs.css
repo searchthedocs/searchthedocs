@@ -123,5 +123,9 @@ body {
   display:inline-block
 }
 .tt-dropdown-menu {
-  max-width: 23.5%;
+  width: 23.5%;
+  position: absolute;
+  z-index: 100;
+  display: block;
+  right: auto;
 }

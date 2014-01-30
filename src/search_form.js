@@ -53,9 +53,18 @@ define(function (require) {
 
       t.suggestions_model = new Backbone.Model();
       t.suggestions_view = new SuggestionsView({
+        query_model: t.query_model,
         suggestions_model: t.suggestions_model
       });
+      t.listenTo(t.suggestions_view, 'suggestion_select', t.clear_suggestions);
 
+    },
+
+    clear_suggestions: function() {
+      var t = this;
+      t.in_completion = false;
+      t.$('input').val('');
+      t.suggestions_model.unset('suggestions');
     },
 
     render: function() {
@@ -88,7 +97,7 @@ define(function (require) {
 
            // Step 2: Set domain on query model if exact match.
            if (domains_matching_stem.length === 1) {
-             t.set_domain(domains_matching_stem[0]);
+             t.query_model.set_domain(domains_matching_stem[0]);
              t.$('input').val('');
              t.suggestions_model.unset('suggestions');
              t.in_completion = false;
@@ -131,19 +140,13 @@ define(function (require) {
              // with the search value.
              if (_.contains(domains_matching_stem, search_val)) {
                e.preventDefault();
-               t.set_domain(search_val.trim());
+               t.query_model.set_domain(search_val.trim());
                t.$('input').val('');
              }
            }
            t.in_completion = false;
          }
        }
-    },
-
-    set_domain: function(domain_val) {
-      this.query_model.set('domain', domain_val);
-      // Notify any listeners that user has made a successful domain completion.
-      Backbone.trigger('domain_completion', domain_val);
     },
 
     unset_domain: function(e) {

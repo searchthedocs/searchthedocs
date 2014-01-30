@@ -10,12 +10,14 @@ define(function(require) {
     events: {
       'mouseover .tt-suggestion': 'suggestion_mouseover',
       'mouseout .tt-suggestion': 'suggestion_mouseout',
+      'click .tt-suggestion': 'suggestion_select',
     },
 
     template: Handlebars.compile(suggestions_tmpl),
 
     initialize: function(options) {
       var t = this;
+      t.query_model = options.query_model;
       t.suggestions_model = options.suggestions_model;
 
       _.bindAll(t, 'render');
@@ -28,6 +30,8 @@ define(function(require) {
       t.$el.html(t.template({
         suggestions: t.suggestions_model.get('suggestions')
       }));
+      // Re-delegate events, otherwise, events will not be bound on re-render.
+      t.delegateEvents();
       return t;
     },
 
@@ -37,6 +41,14 @@ define(function(require) {
 
     suggestion_mouseout: function(e) {
       $(e.currentTarget).removeClass('tt-is-under-cursor');
+    },
+
+    suggestion_select: function(e) {
+      var t = this;
+      var domain_val = $(e.currentTarget).data('domain');
+      console.log(domain_val);
+      t.query_model.set_domain(domain_val);
+      t.trigger('suggestion_select');
     },
 
   });
