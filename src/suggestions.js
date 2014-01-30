@@ -7,6 +7,11 @@ define(function(require) {
 
   var SuggestionsView = Backbone.View.extend({
 
+    events: {
+      'mouseover .tt-suggestion': 'suggestion_mouseover',
+      'mouseout .tt-suggestion': 'suggestion_mouseout',
+    },
+
     template: Handlebars.compile(suggestions_tmpl),
 
     initialize: function(options) {
@@ -24,7 +29,16 @@ define(function(require) {
         suggestions: t.suggestions_model.get('suggestions')
       }));
       return t;
-    }
+    },
+
+    suggestion_mouseover: function(e) {
+      $(e.currentTarget).addClass('tt-is-under-cursor');
+    },
+
+    suggestion_mouseout: function(e) {
+      $(e.currentTarget).removeClass('tt-is-under-cursor');
+    },
+
   });
 
   return SuggestionsView;

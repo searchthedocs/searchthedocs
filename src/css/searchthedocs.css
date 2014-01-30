@@ -122,4 +122,6 @@ body {
 .domain-suggestions [data-link-type="domain"] {
   display:inline-block
 }
-
+.tt-dropdown-menu {
+  max-width: 23.5%;
+}
