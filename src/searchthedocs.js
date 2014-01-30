@@ -105,7 +105,9 @@ define(function (require) {
       });
 
       t.setup_vis_events();
-      t.on('visible', t.do_visible);
+      t.on('visible', function() {
+        Backbone.trigger('view_loaded');
+      });
 
     },
 
@@ -163,18 +165,6 @@ define(function (require) {
       t.$el.append(t.content_view.render().el);
 
       return this;
-    },
-
-    do_visible: function() {
-      // Function to be called once this view actually becomes visible in
-      // the DOM.
-
-      // Trigger 'view_loaded' event
-      Backbone.trigger('view_loaded');
-
-      // Trigger `visible` event on navbar, so that the SearchFormView
-      // can re-render itself based on container size for the initial render.
-      this.navbar.trigger('visible');
     },
 
     populate_domain_list: function() {

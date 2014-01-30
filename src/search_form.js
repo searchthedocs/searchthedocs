@@ -7,13 +7,12 @@ define(function (require) {
   var search_form_tmpl = require('text!./tmpl/search_form.html');
   var filter_to_matching_stems = require('./filter_to_matching_stems');
   var SuggestionsView = require('./suggestions');
-  var VisEventsView = require('./vis_events_view');
 
-  var SearchFormView = VisEventsView.extend({
+  var SearchFormView = Backbone.View.extend({
 
     tagName: 'form',
 
-    className: 'navbar-form navbar-left',
+    className: 'form-inline navbar-form navbar-left',
 
     template: Handlebars.compile(search_form_tmpl),
 
@@ -57,8 +56,6 @@ define(function (require) {
         suggestions_model: t.suggestions_model
       });
 
-      t.setup_vis_events();
-      t.on('visible', t.adjust_width);
     },
 
     render: function() {
@@ -67,20 +64,7 @@ define(function (require) {
 
       t.$el.append(t.suggestions_view.render().el);
 
-      t.adjust_width();
-
       return t;
-    },
-
-    adjust_width: function() {
-      var t = this;
-
-      // Determine size of domain bubble and adjust input width
-      var bubble = t.$('.domain-bubble');
-      if (bubble.length > 0) {
-        var bubble_width = bubble.outerWidth();
-        t.$('input').css('padding-left', bubble_width + 6);
-      }
     },
 
     domain_match: function(e) {
