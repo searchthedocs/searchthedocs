@@ -1,2 +1,8 @@
-Are you looking for <span class="search-term">{{search}}</span> in...<br>
-<span class="domain-links">{{#each domains}}<a class="alert-link" data-link-type="domain" data-domain="{{this}}">{{this}}</a> {{/each}}{{#if more}}<a class="alert-link" data-link-type="more">(more)</a>{{/if}}</span>
+Looking for <span class="search-term">{{search}}</span> in these projects?<br>
+<span class="domain-links">
+{{~#each domains~}}
+<a class="alert-link" data-link-type="domain" data-domain="{{this}}">{{this}}</a>
+{{/each~}}
+{{~#if more~}}
+<a class="alert-link" data-link-type="more">(more)</a>
+{{~/if~}}</span>
