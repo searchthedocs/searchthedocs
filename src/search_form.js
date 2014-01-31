@@ -37,7 +37,26 @@ define(function (require) {
       // Ignore "return" keypresses, which would otherwise trigger a reload.
       if (e.keyCode == '13') {
         e.preventDefault();
+        if (t.suggestions_view.current_selection) {
+          t.suggestions_view.set_domain_val();
+        }
         return;
+      }
+
+      if (e.keyCode == '40') {
+        // Advance to next suggestion, if there are any suggestions currently.
+        if (t.suggestions_model.get('suggestions')) {
+          t.suggestions_view.next_suggestion();
+          return;
+        }
+      }
+
+      if (e.keyCode == '38') {
+        // Move to previous suggestion, if there are any suggestions currently.
+        if (t.suggestions_model.get('suggestions')) {
+          t.suggestions_view.prev_suggestion();
+          return;
+        }
       }
 
       t.domain_match(e);
