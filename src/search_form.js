@@ -17,7 +17,6 @@ define(function (require) {
     template: Handlebars.compile(search_form_tmpl),
 
     events: {
-      'input input': 'input_events',
       'keyup input': 'input_events',
       'keydown input': 'keydown_events'
     },
@@ -26,13 +25,19 @@ define(function (require) {
       // Wrap events that should be called after a new input is received.
       var t = this;
       t.set_query(e);
+
+      t.get_domains_matching_stem();
+
+      Backbone.trigger('search_input', {
+        'search_val': t.search_val,
+        'domains_matching_stem': t.domains_matching_stem,
+      });
     },
 
     keydown_events: function(e) {
       // Wrap events that should be called before a new input is received,
       // ie. to override the default key action.
       var t = this;
-
 
       // Ignore "return" keypresses, which would otherwise trigger a reload.
       if (e.keyCode == '13') {
@@ -95,51 +100,63 @@ define(function (require) {
       return t;
     },
 
-    domain_match: function(e) {
-       // If tab is pressed, check for a domain match.
+    get_domains_matching_stem: function() {
        var t = this;
 
-       var search_val = t.$('input').val();
+       t.search_val = t.$('input').val();
 
-
-       // If we don't already have a domain filter, try to complete one.
-       if (!t.query_model.get('domain')) {
+       // If we don't already have a domain filter, and if the search
+       // value is longer than 2 chars, filter to the domains
+       // matching the search input stem.
+       if (
+           !t.query_model.get('domain')
+           && t.search_val.length > 2
+       ) {
 
          // Step 1: Filter to domains with stems matching the search string.
-         var domains_matching_stem = filter_to_matching_stems({
-           search: search_val,
+         t.domains_matching_stem = filter_to_matching_stems({
+           search: t.search_val,
            array: t.domain_list_model.get('domains')
           });
+       } else {
+         t.domains_matching_stem = [];
+       }
+    },
 
+    domain_match: function(e) {
+       var t = this;
+
+       if (!t.query_model.get('domain')) {
          if (e.keyCode == '9') {
            e.preventDefault();
 
            // Step 2: Set domain on query model if exact match.
-           if (domains_matching_stem.length === 1) {
-             t.query_model.set_domain(domains_matching_stem[0]);
+           if (t.domains_matching_stem.length === 1) {
+             t.query_model.set_domain(t.domains_matching_stem[0]);
              t.$('input').val('');
              t.suggestions_model.unset('suggestions');
              t.in_completion = false;
              return;
            } else {
              // Render a list of suggestions if multiple matches
-             t.suggestions_model.set('suggestions', domains_matching_stem);
+             t.suggestions_model.set('suggestions', t.domains_matching_stem);
            }
 
            // Keep track of when we are in the middle of a completion.
-           if (domains_matching_stem.length > 0) {
+           if (t.domains_matching_stem.length > 0) {
              t.in_completion = true;
 
              // Step 3: Find longest stem matching all filtered domains.
-             var initial_stem_length = search_val.length + 1;
-             var domain_match = domains_matching_stem[0];
+             var initial_stem_length = t.search_val.length + 1;
+             var domain_match = t.domains_matching_stem[0];
              var max_stem_length = domain_match.length;
-             var longest_matching_stem = search_val;
+             var longest_matching_stem = t.search_val;
              for (var i = initial_stem_length; i <= max_stem_length; i++) {
                var new_stem = domain_match.slice(0, i);
-               var all_matching = _.all(domains_matching_stem, function(domain) {
-                 return new_stem === domain.slice(0, i);
-               });
+               var all_matching = _.all(t.domains_matching_stem,
+                   function(domain) {
+                     return new_stem === domain.slice(0, i);
+                   });
                if (!all_matching) {
                  break;
                } else {
@@ -157,9 +174,9 @@ define(function (require) {
            if (e.keyCode == '32' && t.in_completion) {
              // And the matches contain an exact match, finish the completion
              // with the search value.
-             if (_.contains(domains_matching_stem, search_val)) {
+             if (_.contains(t.domains_matching_stem, t.search_val)) {
                e.preventDefault();
-               t.query_model.set_domain(search_val.trim());
+               t.query_model.set_domain(t.search_val.trim());
                t.$('input').val('');
              }
            }
