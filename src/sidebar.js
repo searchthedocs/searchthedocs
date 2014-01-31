@@ -1,17 +1,20 @@
 // SidebarView
 define(function (require) {
-  var _ = require('underscore'),
-    $ = require('jquery'),
-    Backbone = require('backbone'),
-    Handlebars = require('handlebars'),
-    SimpleSearchListItemView = require('./simple_search_list_item'),
-    DomainSuggestionPanel = require('./domain_suggestion_panel');
+  var _ = require('underscore');
+  var $ = require('jquery');
+  var Backbone = require('backbone');
+  var Handlebars = require('handlebars');
+  var SimpleSearchListItemView = require('./simple_search_list_item');
+  var DomainSuggestionPanel = require('./domain_suggestion_panel');
+  var sidebar_tmpl = require('text!./tmpl/sidebar.html');
 
   var SidebarView = Backbone.View.extend({
 
     tagName: 'div',
 
     className: 'stfd-sidebar',
+
+    template: Handlebars.compile(sidebar_tmpl),
 
     initialize: function(options) {
       var t = this;
@@ -25,19 +28,27 @@ define(function (require) {
 
     render: function() {
       var t = this;
-      // Clear existing items.
-      t.$el.html('');
 
+      // Render the container skeleton only once.
+      if (!t.$el.html()) {
+        t.$el.html(t.template());
+      }
 
       t.suggestion_panel = new DomainSuggestionPanel({
         results_model: t.results_model,
         query_model: t.query_model
       });
-      t.$el.append(t.suggestion_panel.render().el);
 
-      var records = t.results_model.get_records();
+      // Render the suggestions into their container.
+      t.$('[data-view-name="suggestion-panel-container"]').html(
+        t.suggestion_panel.render().el
+      );
+
+      // Remove any existing search items.
+      t.$('[data-view-name="search-list-items"]').html('');
 
       // Create a list item view for each record in the results.
+      var records = t.results_model.get_records();
       t.record_views = [];
       _.each(records, function(record) {
         var record_view = new SimpleSearchListItemView({
@@ -46,7 +57,10 @@ define(function (require) {
           query_model: t.query_model
         });
         t.record_views.push(record_view);
-        t.$el.append(record_view.render().el);
+      // Append the search items into their container.
+        t.$('[data-view-name="search-list-items"]').append(
+          record_view.render().el
+        );
       });
 
       // Set the current document to the first result, if any.
